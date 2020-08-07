@@ -1,0 +1,30 @@
+{
+  "name": "pissant-node",
+  "version": "0.1.0",
+  "description": "Various utilities for working with Node.js",
+  "files": [
+    "dist/"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepare": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hubol/pissant-node.git"
+  },
+  "author": "Hubol",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hubol/pissant-node/issues"
+  },
+  "homepage": "https://github.com/hubol/pissant-node#readme",
+  "devDependencies": {
+    "@types/node": "^14.0.27",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "pissant": "^0.1.2"
+  }
+}
