@@ -3,13 +3,13 @@ import {getAllFiles, getFileHash} from "./file";
 
 export async function scanDirectory(args: ScanDirectoryArgs)
 {
-    if (args.scanCount.count === "One")
-        await scanDirectoryOnce(args);
+    if (args.foreverArgs)
+        await scanDirectoryForever({ ...args, ...args.foreverArgs });
     else
-        await scanDirectoryForever(args, args.scanCount.intervalMilliseconds);
+        await scanAndConsume(args);
 }
 
-export interface File
+export interface ScannedFile
 {
     path: string;
     changedOrAdded: boolean;
@@ -17,38 +17,29 @@ export interface File
 
 export interface Scan
 {
-    files: File[];
+    files: ScannedFile[];
 }
 
 export type ScanConsumer = (scan: Scan) => Promise<void>;
 
-export interface OneScan
+export interface ScanDirectoryArgs extends ScanDirectoryCommonArgs
 {
-    count: "One"
+    foreverArgs?: ScanForeverArgs;
 }
 
-export interface InfiniteScan
+export interface ScanDirectoryCommonArgs
 {
-    count: "Infinite",
+    path: string;
+    scanConsumer: ScanConsumer;
+}
+
+export interface ScanForeverArgs
+{
     intervalMilliseconds: number;
+    checkFileContents: boolean;
 }
 
-export type ScanCount = OneScan | InfiniteScan;
-
-export interface ScanDirectoryArgs
-{
-    path: string;
-    scanConsumer: ScanConsumer;
-    scanCount: ScanCount;
-}
-
-interface ScanDirectoryCommonArgs
-{
-    path: string;
-    scanConsumer: ScanConsumer;
-}
-
-async function scanDirectoryForever(args: ScanDirectoryCommonArgs, intervalMilliseconds: number)
+async function scanDirectoryForever(args: ScanDirectoryCommonArgs & ScanForeverArgs)
 {
     const seenHashes = { } as any;
 
@@ -56,24 +47,17 @@ async function scanDirectoryForever(args: ScanDirectoryCommonArgs, intervalMilli
     {
         try
         {
-            const files = (await scanWithHashes(args.path)).map(x => {
-                const changedOrAdded = !(x.path in seenHashes) || seenHashes[x.path] !== x.hash;
-                seenHashes[x.path] = x.hash;
-
-                return {
-                    path: x.path,
-                    changedOrAdded
-                }
-            });
-
-            await args.scanConsumer({ files });
+            if (args.checkFileContents)
+                await scanAndConsumeCheckFileContents(args, seenHashes);
+            else
+                await scanAndConsume(args);
         }
         catch (e)
         {
             console.error(`Scanning ${args.path} failed:`, e);
         }
 
-        await sleep(intervalMilliseconds);
+        await sleep(args.intervalMilliseconds);
     }
 }
 
@@ -87,7 +71,22 @@ async function scanWithHashes(path: string)
     }));
 }
 
-async function scanDirectoryOnce(args: ScanDirectoryCommonArgs)
+async function scanAndConsumeCheckFileContents(args: ScanDirectoryCommonArgs, seenHashes: any)
+{
+    const files = (await scanWithHashes(args.path)).map(x => {
+        const changedOrAdded = !(x.path in seenHashes) || seenHashes[x.path] !== x.hash;
+        seenHashes[x.path] = x.hash;
+
+        return {
+            path: x.path,
+            changedOrAdded
+        }
+    });
+
+    await args.scanConsumer({ files });
+}
+
+async function scanAndConsume(args: ScanDirectoryCommonArgs)
 {
     const files = getAllFiles(args.path).map(x => {
         return {

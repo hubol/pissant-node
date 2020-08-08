@@ -1,6 +1,6 @@
 import { command, execute } from "./execute";
 import { getFileHash, readBytesToBuffer, getFileSizeInBytes, getAllFiles, getDirectory, createDirectory, getRelativePath, ensureDirectory } from "./file";
-import { scanDirectory } from "./scanDirectory";
+import { scanDirectory, ScannedFile, Scan, ScanConsumer, ScanDirectoryArgs, ScanDirectoryCommonArgs, ScanForeverArgs } from "./scanDirectory";
 import { createOrUpdateFile } from "./createOrUpdateFile";
 import { main } from "./main";
 
@@ -17,4 +17,10 @@ export {
     scanDirectory,
     createOrUpdateFile,
     ensureDirectory,
-    main }
+    main,
+    ScannedFile,
+    Scan,
+    ScanConsumer,
+    ScanDirectoryArgs,
+    ScanDirectoryCommonArgs,
+    ScanForeverArgs }
