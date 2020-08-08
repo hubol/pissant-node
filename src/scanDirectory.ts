@@ -66,7 +66,7 @@ async function scanWithHashes(path: string)
     return await Promise.all(getAllFiles(path).map(async x => {
         return {
             path: x,
-            hash: await getFileHash(path)
+            hash: await getFileHash(x)
         };
     }));
 }
