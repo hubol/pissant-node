@@ -81,7 +81,7 @@ export function getAllFiles(dirPath: string, arrayOfFiles: string[] = [])
 
 export function getDirectory(filePath: string)
 {
-    return path.basename(path.dirname(filePath));
+    return path.dirname(filePath);
 }
 
 export function createDirectory(directoryPath: string)
