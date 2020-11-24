@@ -5,6 +5,7 @@ import * as fs from "fs";
 test("getRelativePath", () => {
     expect(getRelativePath("C:/fuck/you", "C:/fuck/")).toBe("..");
     expect(getRelativePath("fuck/you", "fuck/.help")).toBe("../.help");
+    expect(getRelativePath("C:/fuck/you", "C:/fuck/you/hubol/youre/awesome")).toBe("./hubol/youre/awesome");
 });
 
 test("getDirectory", () => {

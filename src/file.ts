@@ -69,7 +69,7 @@ export function getAllFiles(dirPath: string, arrayOfFiles: string[] = [])
     const files = fs.readdirSync(dirPath);
 
     files.forEach(file => {
-        const filePath = path.join(dirPath, file);
+        const filePath = path.join(dirPath, file).replace(/\\/g, "/");
         if (fs.statSync(filePath).isDirectory())
             arrayOfFiles = getAllFiles(filePath, arrayOfFiles);
         else
@@ -91,7 +91,7 @@ export function createDirectory(directoryPath: string)
 
 export function getRelativePath(sourcePath: string, destinationPath: string)
 {
-    const relativePath = path.relative(sourcePath, destinationPath).replace("\\", "/");
+    const relativePath = path.relative(sourcePath, destinationPath).replace(/\\/g, "/");
     if (relativePath.charAt(0) !== ".")
         return "./" + relativePath;
     return relativePath;

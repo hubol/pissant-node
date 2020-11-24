@@ -1,6 +1,6 @@
 {
   "name": "pissant-node",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Various utilities for working with Node.js",
   "files": [
     "dist/"
